@@ -1,0 +1,3 @@
+top_pt:  if3((GenPart_statusFlags>>7)&1==1 && abs(GenPart_pdgId)==6, GenPart_pt ,-10)    : 50,0,1000 ; XTitle="top p_{T} (GeV)"
+top_eta: if3((GenPart_statusFlags>>7)&1==1 && abs(GenPart_pdgId)==6, GenPart_eta,-10)    : 50,-5,5   ; XTitle="top #eta"
+
