@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from __future__ import print_function
 from math import *
 import re
 import os, os.path
@@ -310,14 +311,14 @@ class TreeToYield:
         if 'Friends' in self._settings: friendOpts += self._settings['Friends']
         if 'FriendsSimple' in self._settings: friendOpts += [ ('sf/t', d+"/evVarFriend_{cname}.root") for d in self._settings['FriendsSimple'] ]
         for tf_tree,tf_file in friendOpts:
-#            print 'Adding friend',tf_tree,tf_file
+            #print ('Adding friend',tf_tree,tf_file)
             basepath = None
             for treepath in getattr(self._options, 'path', []):
-                if self._cname in os.listdir(treepath):
+                if self._cname+'.root' in os.listdir(treepath):
                     basepath = treepath
                     break
             if not basepath:
-                raise RuntimeError("%s -- ERROR: %s process not found in paths (%s)" % (__name__, cname, repr(options.path)))
+                raise RuntimeError("%s -- ERROR: %s process not found in paths (%s)" % (__name__, self._cname, repr(options.path)))
 
             tf_filename = tf_file.format(name=self._name, cname=self._cname, P=basepath)
             tf = self._tree.AddFriend(tf_tree, tf_filename),

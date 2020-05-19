@@ -1,0 +1,7 @@
+ww1l+   :  pp-tjww-1l   : 0.00299   ; FillColor=ROOT.kAzure+1
+ww2l+   :  pp-tjww-2l   : 0.00051   ; FillColor=ROOT.kAzure+2
+wz1l+   :  pp-tjwz-123l : 0.00555  :  nGenDressedLepton==1 ; FillColor=ROOT.kRed+1
+wz2l+   :  pp-tjwz-123l : 0.00555  :  nGenDressedLepton==2 ; FillColor=ROOT.kRed+2
+wz3l+   :  pp-tjwz-123l : 0.00555  :  nGenDressedLepton==3 ; FillColor=ROOT.kRed+3
+zz2l+   :  pp-tjzz-24l  : 0.00052  :  nGenDressedLepton==2 ; FillColor=ROOT.kGreen+2
+zz4l+   :  pp-tjzz-24l  : 0.00052  :  nGenDressedLepton==4 ; FillColor=ROOT.kGreen+4

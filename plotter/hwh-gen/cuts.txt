@@ -1,0 +1,7 @@
+alwaystrue : 1
+nFwdJ      : nGenFwdQ > 0
+nT         : nGenTop > 0
+FwdJ_acc   : GenFwdQ_pt[0] > 30 && abs(GenFwdQ_eta[0]) > 2.5 && eFromPt(GenFwdQ_pt[0],GenFwdQ_eta[0],GenFwdQ_phi[0],GenFwdQ_mass[0]) > 300
+Top_acc1   : GenTop_pt[0] > 120
+Top_acc2   : GenTop_pt[0] > 300
+
