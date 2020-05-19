@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 #from tree2yield import *
+from __future__ import print_function
 from tree2yield import *
 from projections import *
 from figuresOfMerit import FOM_BY_NAME
@@ -183,23 +184,16 @@ class MCAnalysis:
 
                 basepath = None
                 for treepath in options.path:
-                    if os.path.exists(treepath+"/"+cname):
+                    if os.path.exists(treepath+"/"+cname+'.root'):
                         basepath = treepath
                         break
                 if not basepath:
                     raise RuntimeError("%s -- ERROR: %s process not found in paths (%s)" % (__name__, cname, repr(options.path)))
 
-                rootfile = "%s/%s/%s/%s_tree.root" % (basepath, cname, treename, treename)
+                rootfile = "%s/%s.root" % (basepath, cname)
                 if options.remotePath:
-                    rootfile = "root:%s/%s/%s_tree.root" % (options.remotePath, cname, treename)
+                    rootfile = "root:%s/%s.root" % (options.remotePath, cname)
                 elif os.path.exists(rootfile+".url"): #(not os.path.exists(rootfile)) and :
-                    rootfile = open(rootfile+".url","r").readline().strip()
-                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root" % (basepath, cname, treename)):
-                    # Heppy calls the tree just 'tree.root'
-                    rootfile = "%s/%s/%s/tree.root" % (basepath, cname, treename)
-                elif (not os.path.exists(rootfile)) and os.path.exists("%s/%s/%s/tree.root.url" % (basepath, cname, treename)):
-                    # Heppy calls the tree just 'tree.root'
-                    rootfile = "%s/%s/%s/tree.root" % (basepath, cname, treename)
                     rootfile = open(rootfile+".url","r").readline().strip()
                 countersfile = "%s/%s/counters.txt" % (basepath, cname)
 
@@ -215,18 +209,29 @@ class MCAnalysis:
                 if pname in self._allData: self._allData[pname].append(tty)
                 else                     : self._allData[pname] =     [tty]
                 if "data" not in pname:
-                    countersobj  = open(countersfile, "r")
-                    counters = eval(countersobj.read())
-                    if ('Sum Weights' in counters) and options.weight:
-                        if (is_w==0): raise RuntimeError("Can't put together a weighted and an unweighted component (%s)" % cnames)
-                        is_w = 1; 
-                        total_w += counters['Sum Weights']
-                        scale = "genWeight*(%s)" % field[2]
-                    else:
-                        if (is_w==1): raise RuntimeError("Can't put together a weighted and an unweighted component (%s)" % cnames)
-                        is_w = 0;
-                        total_w += counters['All Events']
+                    if not os.path.exists(countersfile):
+                        print ("Warning: counters.txt file not present. Assuming no skim and taking the process normalization from file for component %s" % cnames)
+                        ## get the counts from the histograms instead of pickle file (smart, but extra load for ROOT from EOS it seems)
+                        ROOT.gEnv.SetValue("TFile.AsyncReading", 1);
+                        tmp_rootfile = ROOT.TFile.Open(rootfile+"?readaheadsz=65535")
+                        tmp_tree     = tmp_rootfile.Get('Events')
+                        is_w = 0
+                        total_w += tmp_tree.GetEntries()
                         scale = "(%s)" % field[2]
+                        tmp_rootfile.Close()
+                    else:
+                        countersobj  = open(countersfile, "r")
+                        counters = eval(countersobj.read())
+                        if ('Sum Weights' in counters) and options.weight:
+                            if (is_w==0): raise RuntimeError("Can't put together a weighted and an unweighted component (%s)" % cnames)
+                            is_w = 1; 
+                            total_w += counters['Sum Weights']
+                            scale = "genWeight*(%s)" % field[2]
+                        else:
+                            if (is_w==1): raise RuntimeError("Can't put together a weighted and an unweighted component (%s)" % cnames)
+                            is_w = 0;
+                            total_w += counters['All Events']
+                            scale = "(%s)" % field[2]
                     if len(field) == 4: scale += "*("+field[3]+")"
                     for p0,s in options.processesToScale:
                         for p in p0.split(","):

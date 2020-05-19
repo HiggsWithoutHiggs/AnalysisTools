@@ -180,6 +180,12 @@ float DPhi_CMLep_Zboost(float l_pt, float l_eta, float l_phi, float l_M, float l
   return deltaPhi(l1.Phi(),Z.Phi());
 }
 
+float eFromPt(float pt, float eta, float phi, float m) {
+  typedef ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<double> > PtEtaPhiMVector;
+  PtEtaPhiMVector p4(pt,eta,phi,m);
+  return p4.E();
+}
+
 
 //PU weights
 
